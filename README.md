@@ -48,4 +48,4 @@ Contributions of any kind welcome! See the [contributing guide](contributing.md)
 
 # License
 
-See [LICENSE](LICENSE) © [Rigger.dev](https://github.com/localdee/)
+See [LICENSE](LICENSE) © [locald.sh](https://github.com/localdee/)
