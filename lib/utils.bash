@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 set -euo pipefail
 
@@ -7,48 +8,11 @@ GH_REPO="https://github.com/chmln/sd"
 TOOL_NAME="sd"
 TOOL_TEST="sd --version"
 
-# CUSTOMIZE
-get_download_url() {
-	local version
-	version="$1"
-	local platform
-	platform="$2"
-	local arch
-	arch="$3"
-	local processor
-	processor="$4"
+# get the directory of the current script
+utils_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-	local build
-	case "${platform}" in
-	darwin)
-		if [[ "${arch}" == "x86_64" ]]; then
-			build='x86_64-apple-darwin'
-		else
-			build='aarch64-apple-darwin'
-		fi
-		;;
-	linux)
-		if [[ "${arch}" == "x86_64" ]]; then
-			build='x86_64-unknown-linux-gnu'
-		else
-			build='aarch64-unknown-linux-musl'
-		fi
-		;;
-	esac
-
-	# https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-aarch64-apple-darwin.tar.gz
-	echo -n "$GH_REPO/releases/download/v${version}/${TOOL_NAME}-v${version}-${build}.tar.gz"
-}
-
-# CUSTOMIZE
-list_github_tags() {
-	git ls-remote --tags --refs "$GH_REPO" |
-		grep -o 'refs/tags/.*' | cut -d/ -f3- |
-		sed 's/^v//' |
-		grep -v rc |
-		grep -v nightly
-	# NOTE: You might want to adapt this sed to remove non-version strings from tags
-}
+# source the custom script if it exists
+source "${utils_dir}/plugin.bash"
 
 fail() {
 	echo -e "asdf-$TOOL_NAME: $*"
@@ -67,12 +31,6 @@ sort_versions() {
 		LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
 }
 
-list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if sd has other means of determining installable versions.
-	list_github_tags
-}
-
 # MOD - update
 download_release() {
 	local version
@@ -87,7 +45,7 @@ download_release() {
 	processor="$(get_raw_processor)"
 
 	local url
-	url="$(get_download_url "$version" "$platform" "$arch" "$processor")"
+	url="$(get_download_url "$GH_REPO" "$version" "$platform" "$arch" "$processor")"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
