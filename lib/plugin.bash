@@ -15,16 +15,18 @@ extract_release() {
 
 # CUSTOMIZE
 get_download_url() {
+	local tool_name
+	tool_name="$1"
 	local gh_repo
-	gh_repo="$1"
+	gh_repo="$2"
 	local version
-	version="$2"
+	version="$3"
 	local platform
-	platform="$3"
+	platform="$4"
 	local arch
-	arch="$4"
+	arch="$5"
 	local processor
-	processor="$5"
+	processor="$6"
 
 	local build
 	case "${platform}" in
@@ -42,10 +44,13 @@ get_download_url() {
 			build='aarch64-unknown-linux-musl'
 		fi
 		;;
+	*)
+		build='xxx'
+		;;
 	esac
 
 	# https://github.com/chmln/sd/releases/download/v1.0.0/sd-v1.0.0-aarch64-apple-darwin.tar.gz
-	echo -n "${gh_repo}/releases/download/v${version}/${TOOL_NAME}-v${version}-${build}.tar.gz"
+	echo -n "${gh_repo}/releases/download/v${version}/${tool_name}-v${version}-${build}.tar.gz"
 }
 
 # CUSTOMIZE

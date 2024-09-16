@@ -45,7 +45,7 @@ download_release() {
 	processor="$(get_raw_processor)"
 
 	local url
-	url="$(get_download_url "$GH_REPO" "$version" "$platform" "$arch" "$processor")"
+	url="$(get_download_url "$TOOL_NAME" "$GH_REPO" "$version" "$platform" "$arch" "$processor")"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
